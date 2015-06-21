@@ -43,17 +43,16 @@ abstract class InvokeMethod extends Source {
   factory InvokeMethod.constructor(
       DartType classType, {
       String constructorName,
+      bool isConst: false,
       List<Source> positionalArguments: const [],
       Map<String, Source> namedArguments: const {}}) {
     // TODO: Use builder constructs, not raw code.
-    // TODO: Support all use cases.
-    if (namedArguments.isNotEmpty) {
-      throw new UnimplementedError();
-    }
     return new _ConstructorInvokeMethod(
         classType,
         constructorName: constructorName,
-        positionalArguments: positionalArguments);
+        isConst: isConst,
+        positionalArguments: positionalArguments,
+        namedArguments: namedArguments);
   }
 
   /// Invokes [methodName] on [classType].
@@ -76,22 +75,31 @@ abstract class InvokeMethod extends Source {
 class _ConstructorInvokeMethod extends InvokeMethod {
   final DartType classType;
   final String constructorName;
+  final bool isConst;
   final List<Source> positionalArguments;
+  final Map<String, Source> namedArguments;
 
   _ConstructorInvokeMethod(
       this.classType, {
       this.constructorName,
-      this.positionalArguments: const []});
+      this.isConst: false,
+      this.positionalArguments: const [],
+      this.namedArguments: const {}});
 
   @override
   void write(StringSink out) {
-    out.write($NEW);
+    if (isConst) {
+      out.write($CONST);
+    } else {
+      out.write($NEW);
+    }
     out.write(' ');
     classType.write(out);
     if (constructorName != null) {
       out.write('.');
       out.write(constructorName);
     }
+    // TODO: Use [namedArguments] as well.
     writeAll(positionalArguments, out, prefix: '(', postfix: ')');
   }
 }
