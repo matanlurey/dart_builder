@@ -1,6 +1,7 @@
 library dart_builder.src.elements.type;
 
 import 'package:dart_builder/src/elements/source.dart';
+import 'package:quiver/core.dart';
 
 /// A defined dart type.
 class DartType extends Source {
@@ -13,6 +14,8 @@ class DartType extends Source {
 
   static const DartType STRING = const DartType('String');
 
+  static const DartType DATE_TIME = const DartType('DateTime');
+
   /// The type name.
   final String name;
 
@@ -23,6 +26,16 @@ class DartType extends Source {
   final List<DartType> parameters;
 
   const DartType(this.name, {this.namespace, this.parameters: const []});
+
+  @override
+  bool operator==(o) {
+    if (o is! DartType) return false;
+    // TODO: Also validate parameters.
+    return o.name == name && namespace == namespace;
+  }
+
+  @override
+  int get hashCode => hash2(name, namespace);
 
   /// Whether this is typed (e.g., not DYNAMIC).
   bool get isTyped => this != DYNAMIC;
@@ -38,4 +51,11 @@ class DartType extends Source {
       writeAll(parameters, out, prefix: '<', postfix: '>');
     }
   }
+
+  @override
+  String toString() => 'DartType ' + {
+    'name': name,
+    'namespace': namespace,
+    'parameters': parameters
+  }.toString();
 }

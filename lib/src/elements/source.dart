@@ -79,5 +79,8 @@ void writeAll(
       }
     }
     out.write(postfix);
+  } else {
+    out.write(prefix);
+    out.write(postfix);
   }
 }
