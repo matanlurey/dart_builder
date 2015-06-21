@@ -1,7 +1,7 @@
 name: dart_builder
 author: Matan Lurey <matanl@google.com>
 description: A fluent API for creating Dart code.
-version: 0.0.1-alpha.3
+version: 0.1.0
 homepage: https://github.com/matanlurey/dart_builder
 dependencies:
   dart_style: ">=0.1.8 <0.2.0"

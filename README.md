@@ -25,7 +25,7 @@ And include other dart constructs, like classes or methods:
 
 ```dart
 new SourceFile.library('bar', topLevelElements: [
-  new ClassDefinition('Foo')
+  new ClassRef('Foo')
 ]);
 ```
 
@@ -35,11 +35,11 @@ Creating a class
 ---
 
 ```dart
-new ClassDefinition('Foo', fields: [
-  new FieldDefinition('bar')
+new ClassRef('Foo', fields: [
+  new FieldRef('bar')
 ], methods: [
-  new MethodDefinition('baz')
+  new MethodRef('baz')
 ]);
 ```
 
-See `definition_test.dart` for more examples.
+See tests for more examples.
