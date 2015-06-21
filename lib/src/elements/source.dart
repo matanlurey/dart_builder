@@ -20,6 +20,9 @@ abstract class Source {
     write(buffer);
     return buffer.toString();
   }
+
+  @override
+  String toString() => runtimeType.toString() + ' {' + toSource() + '}';
 }
 
 class _TemplateSource extends Source {
@@ -53,7 +56,7 @@ class _RawSource extends Source {
   }
 }
 
-typedef void CustomWriteFn(Source sourec, StringSink out);
+typedef void CustomWriteFn(Source source, StringSink out);
 
 void writeAll(
     Iterable<Source> elements,

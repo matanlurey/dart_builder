@@ -24,7 +24,7 @@ void main() {
 
     test('supports top level elements like classes', () {
       var file = new SourceFile.library('foo', topLevelElements: [
-        new ClassDefinition('Foo')
+        new ClassRef('Foo')
       ]);
       expect(
           file.toSource(),
