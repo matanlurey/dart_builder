@@ -1,5 +1,7 @@
 # Dart Builder
 
+[![Build Status](https://drone.io/github.com/matanlurey/dart_builder/status.png)](https://drone.io/github.com/matanlurey/dart_builder/latest)
+
 ## Introduction
 
 A fluent, immutable API for creating Dart code.
