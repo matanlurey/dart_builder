@@ -76,6 +76,32 @@ class SourceWriter {
     stringBuffer.writeln('}');
   }
 
+  /// Writes [builtDirective] to [stringBuffer].
+  void writeDirective(
+      StringBuffer stringBuffer, BuiltDirective builtDirective) {
+    if (builtDirective.isImport) {
+      stringBuffer.write('import ');
+    }
+    if (builtDirective.isExport) {
+      stringBuffer.write('export ');
+    }
+    stringBuffer..write("'")..write(builtDirective.url)..write("'");
+    writeAll(stringBuffer, builtDirective.show,
+        writeObject: (StringBuffer stringBuffer, String token) {
+      stringBuffer.write(token);
+    }, prefix: ' show ', separator: ',');
+    writeAll(stringBuffer, builtDirective.hide,
+        writeObject: (StringBuffer stringBuffer, String token) {
+      stringBuffer.write(token);
+    }, prefix: ' hide ', separator: ',');
+    if (builtDirective.namespace != null) {
+      if (builtDirective.isDeferred) {
+        stringBuffer.write(' deferred');
+      }
+      stringBuffer..write(' as ')..write(builtDirective.namespace);
+    }
+  }
+
   /// Writes [builtMethod] to [stringBuffer].
   void writeMethod(StringBuffer stringBuffer, BuiltMethod builtMethod) {
     if (builtMethod.isExternal) {

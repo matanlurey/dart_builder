@@ -40,13 +40,8 @@ class BuiltMethodBody {
   int get hashCode {
     int hashCode = _hashCodes[this];
     if (hashCode == null) {
-      hashCode = hashObjects([
-        isExpression,
-        isAsync,
-        isStar,
-        isSync,
-        hashObjects[lines]
-      ]);
+      hashCode = hashObjects(
+          [isExpression, isAsync, isStar, isSync, hashObjects[lines]]);
       _hashCodes[this] = hashCode;
     }
     return hashCode;
@@ -58,10 +53,10 @@ class BuiltMethodBody {
       // Avoid a more expensive comparison if the hash codes are different.
       if (o.hashCode != hashCode) return false;
       return o.isExpression == isExpression &&
-             o.isAsync == isAsync &&
-             o.isStar == isStar &&
-             o.isSync == isSync &&
-             _listEquals(o.lines, lines);
+          o.isAsync == isAsync &&
+          o.isStar == isStar &&
+          o.isSync == isSync &&
+          _listEquals(o.lines, lines);
     }
     return false;
   }
