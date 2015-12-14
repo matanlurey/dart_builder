@@ -15,3 +15,14 @@ All of the "built" files are:
 - Immutable using the `const` constructor or a "builder" class
 - Hashable
 - Implement deep equality
+
+## Concepts
+
+Will need to be expanded on (docs, examples), but here are some of the common data structures provided:
+
+- [BuiltClass](//github.com/matanlurey/dart_builder/blob/master/lib/src/clazz/built_class.dart)
+- [BuiltMethod](//github.com/matanlurey/dart_builder/blob/master/lib/src/method/built_method.dart)
+- [BuiltType](//github.com/matanlurey/dart_builder/blob/master/lib/src/type/built_type.dart)
+- [BuiltVariable](//github.com/matanlurey/dart_builder/blob/master/lib/src/clazz/built_variable.dart)
+
+You also be interested in the [SourceWriter](//github.com/matanlurey/dart_builder/blob/master/lib/src/source_writer.dart), which produces raw Dart code (text) from these data structures. Eventually it will be integrated with `dartfmt` and be possible to integrate into a processing pipeline.
