@@ -1,0 +1,9 @@
+name: dart_builder
+dependencies:
+  analyzer: any
+  built_collection: any
+  collection: any
+  quiver: any
+dev_dependencies:
+  mockito: any
+  test: any

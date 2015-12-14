@@ -1,0 +1,134 @@
+library dart_builder.src.method.built_method;
+
+import 'package:dart_builder/src/type/built_type.dart';
+import 'package:quiver/core.dart';
+import 'package:dart_builder/src/parameter_list/built_parameter_list.dart';
+import 'package:dart_builder/src/method/built_method_body.dart';
+
+/// Immutable method declaration, useful for code generation.
+///
+/// See [MethodBuilder] for a mutable builder.
+class BuiltMethod {
+  static final Expando<int> _hashCodes = new Expando<int>('hashCodes');
+
+  static const String operatorAddition = '+';
+  static const String operatorBracket = '[]';
+  static const String operatorBracketEquals = '[]=';
+  static const String operatorDivision = '/';
+  static const String operatorEquals = '==';
+  static const String operatorGreaterThan = '>';
+  static const String operatorLessThan = '<';
+  static const String operatorMultiplication = '*';
+  static const String operatorSubtraction = '-';
+
+  /// Body.
+  final BuiltMethodBody body;
+
+  /// Whether the method is marked abstract.
+  final bool isAbstract;
+
+  /// Whether the method is marked external.
+  final bool isExternal;
+
+  /// Whether the method is class factory function.
+  final bool isFactory;
+
+  /// Whether the method is a property getter.
+  final bool isGetter;
+
+  /// Whether the method is an operator overload.
+  final bool isOperator;
+
+  /// Whether the method is a property setter.
+  final bool isSetter;
+
+  /// Whether the method is marked static.
+  final bool isStatic;
+
+  /// The name of the method.
+  ///
+  /// May be `null` if the method is a (non-named) closure.
+  final String name;
+
+  /// Defined parameters.
+  final BuiltParameterList parameters;
+
+  /// Return type of the method.
+  final BuiltType returnType;
+
+  const BuiltMethod(
+      {this.body,
+      this.isAbstract: false,
+      this.isExternal: false,
+      this.isFactory: false,
+      this.isGetter: false,
+      this.isOperator: false,
+      this.isSetter: false,
+      this.isStatic: false,
+      this.name,
+      this.parameters: BuiltParameterList.empty,
+      this.returnType: BuiltType.coreVoid});
+
+  const BuiltMethod.getter(this.name,
+      {this.body,
+      this.isAbstract: false,
+      this.isExternal: false,
+      this.isStatic: false,
+      this.returnType: BuiltType.coreDynamic})
+      : this.isGetter = true,
+        this.isFactory = false,
+        this.isOperator = false,
+        this.isSetter = false,
+        this.parameters = BuiltParameterList.empty;
+
+  const BuiltMethod.setter(this.name,
+      {this.body,
+      this.isAbstract: false,
+      this.isExternal: false,
+      this.isStatic: false,
+      this.parameters: BuiltParameterList.empty})
+      : this.isGetter = false,
+        this.isFactory = false,
+        this.isOperator = false,
+        this.isSetter = true,
+        this.returnType = BuiltType.coreVoid;
+
+  @override
+  int get hashCode {
+    int hashCode = _hashCodes[this];
+    if (hashCode == null) {
+      hashCode = hashObjects([
+        body,
+        isAbstract,
+        isExternal,
+        isFactory,
+        isGetter,
+        isOperator,
+        isSetter,
+        isStatic,
+        name,
+        parameters,
+        returnType
+      ]);
+      _hashCodes[this] = hashCode;
+    }
+    return hashCode;
+  }
+
+  @override
+  bool operator ==(Object o) {
+    if (o is BuiltMethod) {
+      return o.body == body &&
+          o.isAbstract == isAbstract &&
+          o.isExternal == isExternal &&
+          o.isFactory == isFactory &&
+          o.isGetter == isGetter &&
+          o.isOperator == isOperator &&
+          o.isSetter == isSetter &&
+          o.name == name &&
+          o.parameters == parameters &&
+          o.returnType == returnType;
+    }
+    return false;
+  }
+}
