@@ -118,6 +118,8 @@ class BuiltMethod {
   @override
   bool operator ==(Object o) {
     if (o is BuiltMethod) {
+      // Avoid a more expensive comparison if the hash codes are different.
+      if (o.hashCode != hashCode) return false;
       return o.body == body &&
           o.isAbstract == isAbstract &&
           o.isExternal == isExternal &&

@@ -1,4 +1,5 @@
 name: dart_builder
+version: 2.0.0a
 dependencies:
   analyzer: any
   built_collection: any

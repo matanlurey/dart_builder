@@ -58,6 +58,8 @@ class BuiltClass {
   @override
   bool operator ==(Object o) {
     if (o is BuiltClass) {
+      // Avoid a more expensive comparison if the hash codes are different.
+      if (o.hashCode != hashCode) return false;
       return o.name == name &&
           o.isAbstract == isAbstract &&
           o.isExternal == isExternal &&
