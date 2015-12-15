@@ -22,12 +22,11 @@ void main() {
     });
 
     test('writes a method with parameters', () {
-      sourceWriter.writeMethod(
-          const BuiltMethod(
-              name: 'foo',
-              parameters: const BuiltParameterList(requiredArguments:
-                  const [const BuiltVariable('bar', type: BuiltType.coreBool)]),
-              returnType: BuiltType.coreString));
+      sourceWriter.writeMethod(const BuiltMethod(
+          name: 'foo',
+          parameters: const BuiltParameterList(requiredArguments:
+              const [const BuiltVariable('bar', type: BuiltType.coreBool)]),
+          returnType: BuiltType.coreString));
       expect(sourceWriter.toString(), 'String foo(bool bar)');
     });
 
@@ -37,24 +36,21 @@ void main() {
     });
 
     test('writes a setter method', () {
-      sourceWriter.writeMethod(
-          const BuiltMethod.setter('foo',
-              parameters: const BuiltParameterList(
-                  requiredArguments: const [const BuiltVariable('foo')])));
+      sourceWriter.writeMethod(const BuiltMethod.setter('foo',
+          parameters: const BuiltParameterList(
+              requiredArguments: const [const BuiltVariable('foo')])));
       expect(sourceWriter.toString(), 'void set foo(dynamic foo)');
     });
 
     test('writes an abstract method', () {
-      sourceWriter.writeMethod(
-          const BuiltMethod(
-              name: 'foo', isAbstract: true, returnType: BuiltType.coreString));
+      sourceWriter.writeMethod(const BuiltMethod(
+          name: 'foo', isAbstract: true, returnType: BuiltType.coreString));
       expect(sourceWriter.toString(), 'abstract String foo()');
     });
 
     test('writes a static method', () {
-      sourceWriter.writeMethod(
-          const BuiltMethod(
-              name: 'foo', isStatic: true, returnType: BuiltType.coreString));
+      sourceWriter.writeMethod(const BuiltMethod(
+          name: 'foo', isStatic: true, returnType: BuiltType.coreString));
       expect(sourceWriter.toString(), 'static String foo()');
     });
 

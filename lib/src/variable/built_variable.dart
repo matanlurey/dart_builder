@@ -15,8 +15,14 @@ class BuiltVariable implements BuiltNamedDefinition {
   /// TODO: Make this a built (const) expression.
   final String defaultValue;
 
+  /// Whether the declaration is const.
+  final bool isConst;
+
   /// Whether the declaration is final.
   final bool isFinal;
+
+  /// Whether the declaration is static.
+  final bool isStatic;
 
   /// The name of the parameter.
   @override
@@ -27,15 +33,31 @@ class BuiltVariable implements BuiltNamedDefinition {
 
   const BuiltVariable(this.name,
       {this.defaultValue,
-      // TODO: Add metadata.
-      this.isFinal: false,
-      this.type: BuiltType.coreDynamic});
+      this.isStatic: false,
+      this.type: BuiltType.coreDynamic})
+      : this.isConst = false,
+        this.isFinal = false;
+
+  const BuiltVariable.asConst(this.name,
+      {this.defaultValue,
+      this.isStatic: false,
+      this.type: BuiltType.coreDynamic})
+      : this.isConst = true,
+        this.isFinal = false;
+
+  const BuiltVariable.asFinal(this.name,
+      {this.defaultValue,
+      this.isStatic: false,
+      this.type: BuiltType.coreDynamic})
+      : this.isConst = false,
+        this.isFinal = true;
 
   @override
   int get hashCode {
     int hashCode = _hashCodes[this];
     if (hashCode == null) {
-      hashCode = hash4(name, type, defaultValue, isFinal);
+      hashCode =
+          hashObjects([defaultValue, isConst, isFinal, isStatic, name, type]);
     }
     return hashCode;
   }
@@ -43,11 +65,24 @@ class BuiltVariable implements BuiltNamedDefinition {
   @override
   bool operator ==(Object o) {
     if (o is BuiltVariable) {
-      return o.name == name &&
-          o.type == type &&
-          o.defaultValue == defaultValue &&
-          o.isFinal == isFinal;
+      return o.defaultValue == defaultValue &&
+          o.isConst == isConst &&
+          o.isFinal == isFinal &&
+          o.isStatic == isStatic &&
+          o.name == name &&
+          o.type == type;
     }
     return false;
   }
+
+  @override
+  String toString() => 'BuiltVariable ' +
+      {
+        'defaultValue': defaultValue,
+        'isConst': isConst,
+        'isFinal': isFinal,
+        'isStatic': isStatic,
+        'name': name,
+        'type': type
+      }.toString();
 }

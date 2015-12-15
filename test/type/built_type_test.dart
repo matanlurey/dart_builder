@@ -1,7 +1,7 @@
 library dart_builder.test.type.built_type_test;
 
-import 'package:dart_builder/src/type/built_type.dart';
 import 'package:dart_builder/src/source_writer.dart';
+import 'package:dart_builder/src/type/built_type.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -38,23 +38,21 @@ void main() {
     });
 
     test('writes a prefixed type', () {
-      sourceWriter.writeType(
-          const BuiltType('Foo', prefix: 'bar'));
+      sourceWriter.writeType(const BuiltType('Foo', prefix: 'bar'));
       expect(sourceWriter.toString(), 'bar.Foo');
     });
 
     test('writes a simple generic type', () {
-      sourceWriter.writeType(
-          const BuiltType.coreList(const [BuiltType.coreString]));
+      sourceWriter
+          .writeType(const BuiltType.coreList(const [BuiltType.coreString]));
       expect(sourceWriter.toString(), 'List<String>');
     });
 
     test('writes a complex generic type', () {
-      sourceWriter.writeType(
-          const BuiltType.coreMap(const [
-            BuiltType.coreString,
-            const BuiltType.coreList(const [BuiltType.coreInt])
-          ]));
+      sourceWriter.writeType(const BuiltType.coreMap(const [
+        BuiltType.coreString,
+        const BuiltType.coreList(const [BuiltType.coreInt])
+      ]));
       expect(sourceWriter.toString(), 'Map<String, List<int>>');
     });
   });

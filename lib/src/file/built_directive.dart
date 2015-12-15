@@ -6,7 +6,7 @@ import 'package:quiver/core.dart';
 /// An `import` or `export` directive to [url].
 class BuiltDirective {
   static final Expando<int> _hashCodes = new Expando<int>('hashCodes');
-  static const _listEquals = const ListEquality();
+  static const ListEquality _listEquals = const ListEquality();
 
   /// Whether the directive should be post-fixed with the `deferred` keyword.
   ///
@@ -92,8 +92,8 @@ class BuiltDirective {
           o.isImport == isImport &&
           o.namespace == namespace &&
           o.url == url &&
-          _listEquals(o.show, show) &&
-          _listEquals(o.hide, hide);
+          _listEquals.equals(o.show, show) &&
+          _listEquals.equals(o.hide, hide);
     }
     return false;
   }

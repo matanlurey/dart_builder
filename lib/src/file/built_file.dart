@@ -1,6 +1,7 @@
 library dart_builder.src.file.built_file;
 
 import 'package:collection/equality.dart';
+import 'package:dart_builder/src/base.dart';
 import 'package:dart_builder/src/file/built_directive.dart';
 import 'package:quiver/core.dart';
 
@@ -10,7 +11,7 @@ import 'package:quiver/core.dart';
 /// - Usually has many [definitions].
 class BuiltFile {
   static final Expando<int> _hashCodes = new Expando<int>();
-  static const _listEquals = const ListEquality();
+  static const ListEquality _listEquals = const ListEquality();
 
   /// Import, export, and part directives.
   final List<BuiltDirective> directives;
@@ -24,9 +25,8 @@ class BuiltFile {
   /// True if the file is part of [libraryName] versus the library itself.
   final bool isPartOf;
 
-  const BuiltFile(
-      this.libraryName, {
-      this.definitions: const [],
+  const BuiltFile(this.libraryName,
+      {this.definitions: const [],
       this.directives: const [],
       this.isPartOf: false});
 
@@ -50,10 +50,10 @@ class BuiltFile {
     if (o is BuiltFile) {
       // Avoid a more expensive comparison if the hash codes are different.
       if (o.hashCode != hashCode) return false;
-      return _listEquals(o.directives, directives) &&
-             _listEquals(o.definitions, definitions) &&
-             o.libraryName == libraryName &&
-             o.isPartOf == isPartOf;
+      return _listEquals.equals(o.directives, directives) &&
+          _listEquals.equals(o.definitions, definitions) &&
+          o.libraryName == libraryName &&
+          o.isPartOf == isPartOf;
     }
     return false;
   }

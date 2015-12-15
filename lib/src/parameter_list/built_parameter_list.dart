@@ -10,7 +10,7 @@ import 'package:quiver/core.dart';
 class BuiltParameterList {
   static const BuiltParameterList empty = const BuiltParameterList();
   static final Expando<int> _hashCodes = new Expando<int>('hashCodes');
-  static const _listEquals = const ListEquality();
+  static const ListEquality _listEquals = const ListEquality();
 
   /// Arguments that are optional to invoke a method.
   final List<BuiltVariable> optionalArguments;
@@ -42,8 +42,10 @@ class BuiltParameterList {
   @override
   bool operator ==(Object o) {
     if (o is BuiltParameterList) {
-      return _listEquals(o.requiredArguments, requiredArguments) &&
-          _listEquals(o.optionalArguments, optionalArguments) &&
+      // Avoid a more expensive comparison if the hash codes are different.
+      if (o.hashCode != hashCode) return false;
+      return _listEquals.equals(o.requiredArguments, requiredArguments) &&
+          _listEquals.equals(o.optionalArguments, optionalArguments) &&
           o.useNamedOptionalArguments == useNamedOptionalArguments;
     }
     return false;

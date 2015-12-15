@@ -2,6 +2,7 @@ library dart_builder.src.clazz.built_class;
 
 import 'package:collection/equality.dart';
 import 'package:dart_builder/src/base.dart';
+import 'package:dart_builder/src/clazz/built_constructor.dart';
 import 'package:dart_builder/src/method/built_method.dart';
 import 'package:dart_builder/src/type/built_type.dart';
 import 'package:dart_builder/src/variable/built_variable.dart';
@@ -12,7 +13,7 @@ import 'package:quiver/core.dart';
 /// See [ClassBuilder] for a mutable builder.
 class BuiltClass implements BuiltNamedDefinition {
   static final Expando<int> _hashCodes = new Expando<int>('hashCodes');
-  static const _listEquals = const ListEquality();
+  static const ListEquality _listEquals = const ListEquality();
 
   /// Whether this class should be marked `abstract`.
   final bool isAbstract;
@@ -27,16 +28,10 @@ class BuiltClass implements BuiltNamedDefinition {
   /// Class-level member fields.
   final List<BuiltVariable> fields;
 
+  /// Constructors.
+  final List<BuiltConstructor> constructors;
+
   /// Class-level member methods.
-  ///
-  /// To implement constructors, use the [name] of the class as the method name
-  /// or with the `.name` syntax for named constructors, i.e.:
-  ///     const BuiltClass(
-  ///         'Foo',
-  ///         methods: const [const BuiltMethod(name: 'Foo.fromBar')])
-  ///
-  /// TODO: Consider a seperate collection for constructors and add missing
-  /// parts like `const` for a constructor.
   final List<BuiltMethod> methods;
 
   /// Generic types the class supports.
@@ -59,6 +54,7 @@ class BuiltClass implements BuiltNamedDefinition {
   const BuiltClass(this.name,
       {this.isAbstract: false,
       this.isExternal: false,
+      this.constructors: const [],
       this.fields: const [],
       this.methods: const [],
       this.generics: const [],
@@ -74,6 +70,7 @@ class BuiltClass implements BuiltNamedDefinition {
         name,
         isAbstract,
         isExternal,
+        hashObjects(constructors),
         hashObjects(fields),
         hashObjects(methods),
         hashObjects(generics),
@@ -94,12 +91,13 @@ class BuiltClass implements BuiltNamedDefinition {
       return o.name == name &&
           o.isAbstract == isAbstract &&
           o.isExternal == isExternal &&
-          _listEquals(o.fields, fields) &&
-          _listEquals(o.methods, methods) &&
-          _listEquals(o.generics, generics) &&
+          o.constructors == constructors &&
+          _listEquals.equals(o.fields, fields) &&
+          _listEquals.equals(o.methods, methods) &&
+          _listEquals.equals(o.generics, generics) &&
           o.extend == extend &&
-          _listEquals(o.implement, implement) &&
-          _listEquals(o.mixin, mixin);
+          _listEquals.equals(o.implement, implement) &&
+          _listEquals.equals(o.mixin, mixin);
     }
     return false;
   }

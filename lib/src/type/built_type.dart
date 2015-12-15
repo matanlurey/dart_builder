@@ -12,7 +12,7 @@ import 'package:quiver/core.dart';
 /// See [TypeBuilder] for a mutable builder.
 class BuiltType {
   static final Expando<int> _hashCodes = new Expando<int>('hashCodes');
-  static const _listEquals = const ListEquality();
+  static const ListEquality _listEquals = const ListEquality();
 
   /// An alias for `BuiltType('bool')`.
   static const BuiltType coreBool = const BuiltType('bool');
@@ -79,7 +79,7 @@ class BuiltType {
       if (o is _DynamicBuiltType || o is _VoidBuiltType) return false;
       return o.name == name &&
           o.prefix == prefix &&
-          _listEquals(o.generics, generics);
+          _listEquals.equals(o.generics, generics);
     }
     return false;
   }
@@ -100,6 +100,8 @@ class _DynamicBuiltType implements BuiltType {
   final String prefix = null;
 
   const _DynamicBuiltType();
+
+  String toString() => 'BuiltType {dynamic}';
 }
 
 class _VoidBuiltType implements BuiltType {
@@ -113,4 +115,7 @@ class _VoidBuiltType implements BuiltType {
   final String prefix = null;
 
   const _VoidBuiltType();
+
+  @override
+  String toString() => 'BuiltType {void}';
 }

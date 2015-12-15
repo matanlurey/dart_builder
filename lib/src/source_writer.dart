@@ -2,10 +2,12 @@ library dart_builder.src.source_writer;
 
 import 'package:dart_builder/src/base.dart';
 import 'package:dart_builder/src/clazz/built_class.dart';
+import 'package:dart_builder/src/clazz/built_constructor.dart';
 import 'package:dart_builder/src/file/built_directive.dart';
 import 'package:dart_builder/src/file/built_file.dart';
 import 'package:dart_builder/src/method/built_method.dart';
 import 'package:dart_builder/src/method/built_method_body.dart';
+import 'package:dart_builder/src/method/built_method_invocation.dart';
 import 'package:dart_builder/src/parameter_list/built_parameter_list.dart';
 import 'package:dart_builder/src/type/built_type.dart';
 import 'package:dart_builder/src/variable/built_variable.dart';
@@ -13,10 +15,12 @@ import 'package:dart_builder/src/variable/built_variable.dart';
 /// An interface that can write "built" structures, often to disk or memory.
 abstract class SourceWriter {
   void writeClass(BuiltClass builtClass);
+  void writeConstructor(BuiltConstructor builtConstructor, String className);
   void writeDirective(BuiltDirective builtDirective);
   void writeFile(BuiltFile builtFile);
   void writeMethod(BuiltMethod builtMethod);
   void writeMethodBody(BuiltMethodBody builtMethodBody);
+  void writeMethodInvocation(BuiltMethodInvocation builtMethodInvocation);
   void writeParameterList(BuiltParameterList builtParameterList);
   void writeType(BuiltType builtType);
   void writeVariable(BuiltVariable builtVariable);
@@ -37,8 +41,7 @@ class StringSourceWriter implements SourceWriter {
   /// - Precedes with [prefix].
   /// - Writes items, separating them with [separator].
   /// - Ends with [suffix].
-  void writeAll(
-      Iterable objects,
+  void writeAll(Iterable objects,
       {void writeObject(Object object),
       String prefix: '',
       String separator: '',
@@ -88,14 +91,70 @@ class StringSourceWriter implements SourceWriter {
         suffix: ' ',
         separator: ', ');
     _stringBuffer.writeln('{');
-    writeAll(builtClass.fields,
-        writeObject: (BuiltVariable variable) {
+    writeAll(builtClass.fields, writeObject: (BuiltVariable variable) {
       writeVariable(variable);
       _stringBuffer.write(';\n');
     });
-    writeAll(builtClass.methods,
-        writeObject: writeMethod, separator: '\n');
+    writeAll(builtClass.constructors,
+        writeObject: (BuiltConstructor constructor) {
+      writeConstructor(constructor, builtClass.name);
+      _stringBuffer.write('\n');
+    });
+    writeAll(builtClass.methods, writeObject: writeMethod, separator: '\n');
     _stringBuffer.writeln('}');
+  }
+
+  @override
+  void writeConstructor(BuiltConstructor builtConstructor, String className) {
+    if (builtConstructor.isConst) {
+      _stringBuffer.write('const ');
+    }
+    if (builtConstructor.isFactory) {
+      _stringBuffer.write('factory ');
+    }
+    _stringBuffer.write(className);
+    if (builtConstructor.name != null) {
+      _stringBuffer..write('.')..write(builtConstructor.name);
+    }
+    _stringBuffer.write('(');
+    writeParameterList(builtConstructor.parameters);
+    _stringBuffer.write(')');
+    if (builtConstructor.redirectTo != null) {
+      _stringBuffer.write(' = ');
+      writeType(builtConstructor.redirectTo);
+      if (builtConstructor.redirectToName != null) {
+        _stringBuffer..write('.')..write(builtConstructor.redirectToName);
+      }
+    }
+    if (builtConstructor.initializers.isNotEmpty ||
+        builtConstructor.superCall != null) {
+      _stringBuffer.write(' : ');
+    }
+    if (builtConstructor.superCall != null) {
+      _stringBuffer.write('super');
+      if (builtConstructor.superConstructorName != null) {
+        _stringBuffer..write('.')..write(builtConstructor.superConstructorName);
+      }
+      writeMethodInvocation(builtConstructor.superCall);
+      if (builtConstructor.initializers.isNotEmpty) {
+        _stringBuffer.write(', ');
+      }
+    }
+    if (builtConstructor.initializers.isNotEmpty) {
+      writeAll(builtConstructor.initializers.keys,
+          writeObject: (String property) {
+        _stringBuffer
+          ..write('this.')
+          ..write(property)
+          ..write(' = ')
+          ..write(builtConstructor.initializers[property]);
+      }, separator: ', ');
+    }
+    if (builtConstructor.body == null) {
+      _stringBuffer.write(';');
+    } else {
+      _stringBuffer..write(' { ')..write(builtConstructor.body)..write('}');
+    }
   }
 
   @override
@@ -110,8 +169,7 @@ class StringSourceWriter implements SourceWriter {
       _stringBuffer.write('part ');
     }
     _stringBuffer..write("'")..write(builtDirective.url)..write("'");
-    writeAll(builtDirective.show,
-        writeObject: (String token) {
+    writeAll(builtDirective.show, writeObject: (String token) {
       _stringBuffer.write(token);
     }, prefix: ' show ', separator: ',');
     writeAll(builtDirective.hide, writeObject: (String token) {
@@ -135,27 +193,24 @@ class StringSourceWriter implements SourceWriter {
     _stringBuffer
       ..write(builtFile.libraryName)
       ..writeln(';');
-    writeAll(
-        builtFile.directives,
+    writeAll(builtFile.directives,
         writeObject: (BuiltDirective builtDirective) {
-          writeDirective(builtDirective);
-          _stringBuffer.writeln(';');
-        },
-        suffix: '\n\n');
-    writeAll(
-        builtFile.definitions,
+      writeDirective(builtDirective);
+      _stringBuffer.writeln(';');
+    }, suffix: '\n\n');
+    writeAll(builtFile.definitions,
         writeObject: (BuiltNamedDefinition builtNamedDefinition) {
-          if (builtNamedDefinition is BuiltClass) {
-            writeClass(builtNamedDefinition);
-            _stringBuffer.writeln();
-          } else if (builtNamedDefinition is BuiltMethod) {
-            writeMethod(builtNamedDefinition);
-            _stringBuffer.writeln();
-          } else if (builtNamedDefinition is BuiltVariable) {
-            writeVariable(builtNamedDefinition);
-            _stringBuffer.writeln(';');
-          }
-        });
+      if (builtNamedDefinition is BuiltClass) {
+        writeClass(builtNamedDefinition);
+        _stringBuffer.writeln();
+      } else if (builtNamedDefinition is BuiltMethod) {
+        writeMethod(builtNamedDefinition);
+        _stringBuffer.writeln();
+      } else if (builtNamedDefinition is BuiltVariable) {
+        writeVariable(builtNamedDefinition);
+        _stringBuffer.writeln(';');
+      }
+    });
   }
 
   @override
@@ -208,17 +263,29 @@ class StringSourceWriter implements SourceWriter {
     }
     if (builtMethodBody.isExpression) {
       _stringBuffer.write(' => ');
-      assert(builtMethodBody.lines.length == 1);
-      _stringBuffer.write(builtMethodBody.lines.first);
+      _stringBuffer.write(builtMethodBody.body);
     } else {
-      if (builtMethodBody.lines.isEmpty) {
+      if (builtMethodBody.body.isEmpty) {
         _stringBuffer.writeln(' {}');
       } else {
-        _stringBuffer.writeln(' {');
-        builtMethodBody.lines.forEach(_stringBuffer.writeln);
-        _stringBuffer.writeln('}');
+        _stringBuffer..write(' {')..write(builtMethodBody.body)..write('}');
       }
     }
+  }
+
+  @override
+  void writeMethodInvocation(BuiltMethodInvocation builtMethodInvocation) {
+    _stringBuffer.write('(');
+    writeAll(builtMethodInvocation.positionalArguments, separator: ', ');
+    if (builtMethodInvocation.positionalArguments.isNotEmpty &&
+        builtMethodInvocation.namedArguments.isNotEmpty) {
+      _stringBuffer.write(', ');
+    }
+    writeAll(builtMethodInvocation.namedArguments.keys,
+        writeObject: (String key) {
+      _stringBuffer.write('$key: ${builtMethodInvocation.namedArguments[key]}');
+    }, separator: ', ');
+    _stringBuffer.write(')');
   }
 
   @override
@@ -244,9 +311,7 @@ class StringSourceWriter implements SourceWriter {
   @override
   void writeType(BuiltType builtType) {
     if (builtType.prefix != null) {
-      _stringBuffer
-        ..write(builtType.prefix)
-        ..write('.');
+      _stringBuffer..write(builtType.prefix)..write('.');
     }
     _stringBuffer.write(builtType.name);
     writeAll(builtType.generics,
@@ -254,8 +319,7 @@ class StringSourceWriter implements SourceWriter {
   }
 
   @override
-  void writeVariable(BuiltVariable builtParameter,
-      {bool keyValuePair: false}) {
+  void writeVariable(BuiltVariable builtParameter, {bool keyValuePair: false}) {
     writeType(builtParameter.type);
     _stringBuffer..write(' ')..write(builtParameter.name);
     if (builtParameter.defaultValue != null) {

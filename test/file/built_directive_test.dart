@@ -13,12 +13,14 @@ void main() {
     });
 
     test('writes an import', () {
-      sourceWriter.writeDirective(const BuiltDirective.import('package:foo/foo.dart'));
+      sourceWriter
+          .writeDirective(const BuiltDirective.import('package:foo/foo.dart'));
       expect(sourceWriter.toString(), "import 'package:foo/foo.dart'");
     });
 
     test('writes an export', () {
-      sourceWriter.writeDirective(const BuiltDirective.export('package:foo/foo.dart'));
+      sourceWriter
+          .writeDirective(const BuiltDirective.export('package:foo/foo.dart'));
       expect(sourceWriter.toString(), "export 'package:foo/foo.dart'");
     });
 
@@ -28,31 +30,32 @@ void main() {
     });
 
     test('writes with a namespace', () {
-      sourceWriter.writeDirective(
-          const BuiltDirective.import('package:foo/foo.dart',
-              namespace: 'foo'));
+      sourceWriter.writeDirective(const BuiltDirective.import(
+          'package:foo/foo.dart',
+          namespace: 'foo'));
       expect(sourceWriter.toString(), "import 'package:foo/foo.dart' as foo");
     });
 
     test('writes deferred with a namespace', () {
-      sourceWriter.writeDirective(
-          const BuiltDirective.import('package:foo/foo.dart',
-              isDeferred: true, namespace: 'foo'));
+      sourceWriter.writeDirective(const BuiltDirective.import(
+          'package:foo/foo.dart',
+          isDeferred: true,
+          namespace: 'foo'));
       expect(sourceWriter.toString(),
           "import 'package:foo/foo.dart' deferred as foo");
     });
 
     test('writes with show', () {
-      sourceWriter.writeDirective(
-          const BuiltDirective.import('package:foo/foo.dart',
-              show: const ['Foo']));
+      sourceWriter.writeDirective(const BuiltDirective.import(
+          'package:foo/foo.dart',
+          show: const ['Foo']));
       expect(sourceWriter.toString(), "import 'package:foo/foo.dart' show Foo");
     });
 
     test('writes with hide', () {
-      sourceWriter.writeDirective(
-          const BuiltDirective.import('package:foo/foo.dart',
-              hide: const ['Bar']));
+      sourceWriter.writeDirective(const BuiltDirective.import(
+          'package:foo/foo.dart',
+          hide: const ['Bar']));
       expect(sourceWriter.toString(), "import 'package:foo/foo.dart' hide Bar");
     });
   });
