@@ -6,36 +6,32 @@ import 'package:dart_builder/src/source_writer.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('BuiltVariale with SourceWriter', () {
-    StringBuffer stringBuffer;
-    SourceWriter sourceWriter;
+  group('BuiltVariale with StringSourceWriter', () {
+    StringSourceWriter sourceWriter;
 
     setUp(() {
-      stringBuffer = new StringBuffer();
-      sourceWriter = const SourceWriter();
+      sourceWriter = new StringSourceWriter();
     });
 
     test('writes a parameter', () {
       sourceWriter.writeVariable(
-          stringBuffer, const BuiltVariable('foo', type: BuiltType.coreString));
-      expect(stringBuffer.toString(), 'String foo');
+          const BuiltVariable('foo', type: BuiltType.coreString));
+      expect(sourceWriter.toString(), 'String foo');
     });
 
     test('writes a parameter with a default value', () {
       sourceWriter.writeVariable(
-          stringBuffer,
           const BuiltVariable('foo',
               type: BuiltType.coreBool, defaultValue: 'true'));
-      expect(stringBuffer.toString(), 'bool foo = true');
+      expect(sourceWriter.toString(), 'bool foo = true');
     });
 
     test('writes a parameter with a default value (key/value pair)', () {
       sourceWriter.writeVariable(
-          stringBuffer,
           const BuiltVariable('foo',
               type: BuiltType.coreBool, defaultValue: 'true'),
           keyValuePair: true);
-      expect(stringBuffer.toString(), 'bool foo: true');
+      expect(sourceWriter.toString(), 'bool foo: true');
     });
   });
 }

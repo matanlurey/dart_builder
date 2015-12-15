@@ -10,13 +10,26 @@ import 'package:dart_builder/src/parameter_list/built_parameter_list.dart';
 import 'package:dart_builder/src/type/built_type.dart';
 import 'package:dart_builder/src/variable/built_variable.dart';
 
-/// Writes [object] to [stringBuffer].
-typedef void WriteObject<T>(StringBuffer stringBuffer, T object);
+/// An interface that can write "built" structures, often to disk or memory.
+abstract class SourceWriter {
+  void writeClass(BuiltClass builtClass);
+  void writeDirective(BuiltDirective builtDirective);
+  void writeFile(BuiltFile builtFile);
+  void writeMethod(BuiltMethod builtMethod);
+  void writeMethodBody(BuiltMethodBody builtMethodBody);
+  void writeParameterList(BuiltParameterList builtParameterList);
+  void writeType(BuiltType builtType);
+  void writeVariable(BuiltVariable builtVariable);
+}
 
-// TODO: Refactor to remove having to type stringBuffer over and over.
-// Instead, StringSourceWriter?.
-class SourceWriter {
-  const SourceWriter();
+/// A writer on top of [StringBuffer].
+///
+/// Use [toString] to get the resulting string.
+class StringSourceWriter implements SourceWriter {
+  final StringBuffer _stringBuffer = new StringBuffer();
+
+  @override
+  String toString() => _stringBuffer.toString();
 
   /// A helper for writing many items out in a formatted matter.
   ///
@@ -24,236 +37,230 @@ class SourceWriter {
   /// - Precedes with [prefix].
   /// - Writes items, separating them with [separator].
   /// - Ends with [suffix].
-  void writeAll(StringBuffer stringBuffer, Iterable objects,
-      {WriteObject writeObject: _identityWriteObject,
+  void writeAll(
+      Iterable objects,
+      {void writeObject(Object object),
       String prefix: '',
       String separator: '',
       String suffix: ''}) {
     if (objects.isEmpty) return;
-    stringBuffer.write(prefix);
+    _stringBuffer.write(prefix);
     var wroteFirstItem = false;
     for (final object in objects) {
       if (wroteFirstItem) {
-        stringBuffer.write(separator);
+        _stringBuffer.write(separator);
       }
-      writeObject(stringBuffer, object);
+      if (writeObject == null) {
+        writeObject = _stringBuffer.write;
+      }
+      writeObject(object);
       wroteFirstItem = true;
     }
-    stringBuffer.write(suffix);
+    _stringBuffer.write(suffix);
   }
 
-  /// Writes [builtClass] to [stringBuffer].
-  void writeClass(StringBuffer stringBuffer, BuiltClass builtClass) {
+  @override
+  void writeClass(BuiltClass builtClass) {
     if (builtClass.isAbstract) {
-      stringBuffer.write('abstract ');
+      _stringBuffer.write('abstract ');
     }
     if (builtClass.isExternal) {
-      stringBuffer.write('external ');
+      _stringBuffer.write('external ');
     }
-    stringBuffer..write('class ')..write(builtClass.name);
-    writeAll(stringBuffer, builtClass.generics,
+    _stringBuffer..write('class ')..write(builtClass.name);
+    writeAll(builtClass.generics,
         writeObject: writeType, separator: ', ', prefix: '<', suffix: '>');
-    stringBuffer.write(' ');
+    _stringBuffer.write(' ');
     BuiltType extend = builtClass.extend;
     if (extend == null && builtClass.mixin.isNotEmpty) {
       extend = BuiltType.coreObject;
     }
     if (extend != null) {
-      stringBuffer.write('extends ');
-      writeType(stringBuffer, extend);
-      stringBuffer.write(' ');
+      _stringBuffer.write('extends ');
+      writeType(extend);
+      _stringBuffer.write(' ');
     }
-    writeAll(stringBuffer, builtClass.mixin,
+    writeAll(builtClass.mixin,
         writeObject: writeType, prefix: 'with ', suffix: ' ', separator: ', ');
-    writeAll(stringBuffer, builtClass.implement,
+    writeAll(builtClass.implement,
         writeObject: writeType,
         prefix: 'implements ',
         suffix: ' ',
         separator: ', ');
-    stringBuffer.writeln('{');
-    writeAll(stringBuffer, builtClass.fields,
-        writeObject: (StringBuffer buffer, BuiltVariable variable) {
-      writeVariable(buffer, variable);
-      buffer.write(';\n');
+    _stringBuffer.writeln('{');
+    writeAll(builtClass.fields,
+        writeObject: (BuiltVariable variable) {
+      writeVariable(variable);
+      _stringBuffer.write(';\n');
     });
-    writeAll(stringBuffer, builtClass.methods,
+    writeAll(builtClass.methods,
         writeObject: writeMethod, separator: '\n');
-    stringBuffer.writeln('}');
+    _stringBuffer.writeln('}');
   }
 
-  /// Writes [builtDirective] to [stringBuffer].
-  void writeDirective(
-      StringBuffer stringBuffer, BuiltDirective builtDirective) {
+  @override
+  void writeDirective(BuiltDirective builtDirective) {
     if (builtDirective.isImport) {
-      stringBuffer.write('import ');
+      _stringBuffer.write('import ');
     }
     if (builtDirective.isExport) {
-      stringBuffer.write('export ');
+      _stringBuffer.write('export ');
     }
     if (builtDirective.isPart) {
-      stringBuffer.write('part ');
+      _stringBuffer.write('part ');
     }
-    stringBuffer..write("'")..write(builtDirective.url)..write("'");
-    writeAll(stringBuffer, builtDirective.show,
-        writeObject: (StringBuffer stringBuffer, String token) {
-      stringBuffer.write(token);
+    _stringBuffer..write("'")..write(builtDirective.url)..write("'");
+    writeAll(builtDirective.show,
+        writeObject: (String token) {
+      _stringBuffer.write(token);
     }, prefix: ' show ', separator: ',');
-    writeAll(stringBuffer, builtDirective.hide,
-        writeObject: (StringBuffer stringBuffer, String token) {
-      stringBuffer.write(token);
+    writeAll(builtDirective.hide, writeObject: (String token) {
+      _stringBuffer.write(token);
     }, prefix: ' hide ', separator: ',');
     if (builtDirective.namespace != null) {
       if (builtDirective.isDeferred) {
-        stringBuffer.write(' deferred');
+        _stringBuffer.write(' deferred');
       }
-      stringBuffer..write(' as ')..write(builtDirective.namespace);
+      _stringBuffer..write(' as ')..write(builtDirective.namespace);
     }
   }
 
-  /// Writes [builtFile] to [stringBuffer].
-  void writeFile(
-      StringBuffer stringBuffer, BuiltFile builtFile) {
+  @override
+  void writeFile(BuiltFile builtFile) {
     if (builtFile.isPartOf) {
-      stringBuffer.write('part of ');
+      _stringBuffer.write('part of ');
     } else {
-      stringBuffer.write('library ');
+      _stringBuffer.write('library ');
     }
-    stringBuffer
+    _stringBuffer
       ..write(builtFile.libraryName)
       ..writeln(';');
     writeAll(
-        stringBuffer,
         builtFile.directives,
-        writeObject: (StringBuffer stringBuffer, BuiltDirective builtDirective) {
-          writeDirective(stringBuffer, builtDirective);
-          stringBuffer.writeln(';');
+        writeObject: (BuiltDirective builtDirective) {
+          writeDirective(builtDirective);
+          _stringBuffer.writeln(';');
         },
         suffix: '\n\n');
     writeAll(
-        stringBuffer,
         builtFile.definitions,
-        writeObject: (StringBuffer stringBuffer, BuiltNamedDefinition builtNamedDefinition) {
+        writeObject: (BuiltNamedDefinition builtNamedDefinition) {
           if (builtNamedDefinition is BuiltClass) {
-            writeClass(stringBuffer, builtNamedDefinition);
-            stringBuffer.writeln();
+            writeClass(builtNamedDefinition);
+            _stringBuffer.writeln();
           } else if (builtNamedDefinition is BuiltMethod) {
-            writeMethod(stringBuffer, builtNamedDefinition);
-            stringBuffer.writeln();
+            writeMethod(builtNamedDefinition);
+            _stringBuffer.writeln();
           } else if (builtNamedDefinition is BuiltVariable) {
-            writeVariable(stringBuffer, builtNamedDefinition);
-            stringBuffer.writeln(';');
+            writeVariable(builtNamedDefinition);
+            _stringBuffer.writeln(';');
           }
         });
   }
 
-  /// Writes [builtMethod] to [stringBuffer].
-  void writeMethod(StringBuffer stringBuffer, BuiltMethod builtMethod) {
+  @override
+  void writeMethod(BuiltMethod builtMethod) {
     if (builtMethod.isExternal) {
-      stringBuffer..write('external')..write(' ');
+      _stringBuffer..write('external')..write(' ');
     }
     if (builtMethod.isStatic) {
-      stringBuffer..write('static')..write(' ');
+      _stringBuffer..write('static')..write(' ');
     }
     if (builtMethod.isAbstract) {
-      stringBuffer..write('abstract')..write(' ');
+      _stringBuffer..write('abstract')..write(' ');
     }
-    writeType(stringBuffer, builtMethod.returnType);
-    stringBuffer.write(' ');
+    writeType(builtMethod.returnType);
+    _stringBuffer.write(' ');
     if (builtMethod.isGetter) {
-      stringBuffer..write('get')..write(' ');
+      _stringBuffer..write('get')..write(' ');
     }
     if (builtMethod.isSetter) {
-      stringBuffer..write('set')..write(' ');
+      _stringBuffer..write('set')..write(' ');
     }
     if (builtMethod.isOperator) {
-      stringBuffer..write('operator')..write(' ');
+      _stringBuffer..write('operator')..write(' ');
     }
     if (builtMethod.name != null) {
-      stringBuffer.write(builtMethod.name);
+      _stringBuffer.write(builtMethod.name);
     }
     if (!builtMethod.isGetter) {
-      stringBuffer.write('(');
+      _stringBuffer.write('(');
     }
-    writeParameterList(stringBuffer, builtMethod.parameters);
+    writeParameterList(builtMethod.parameters);
     if (!builtMethod.isGetter) {
-      stringBuffer.write(')');
+      _stringBuffer.write(')');
     }
     if (builtMethod.body != null) {
-      writeMethodBody(stringBuffer, builtMethod.body);
+      writeMethodBody(builtMethod.body);
     }
   }
 
-  /// Writes [builtMethodBody] to [stringBuffer].
-  void writeMethodBody(
-      StringBuffer stringBuffer, BuiltMethodBody builtMethodBody) {
+  @override
+  void writeMethodBody(BuiltMethodBody builtMethodBody) {
     if (builtMethodBody.isAsync) {
-      stringBuffer.write('async');
+      _stringBuffer.write('async');
     }
     if (builtMethodBody.isSync) {
-      stringBuffer.write('sync');
+      _stringBuffer.write('sync');
     }
     if (builtMethodBody.isStar) {
-      stringBuffer.write('*');
+      _stringBuffer.write('*');
     }
     if (builtMethodBody.isExpression) {
-      stringBuffer.write(' => ');
+      _stringBuffer.write(' => ');
       assert(builtMethodBody.lines.length == 1);
-      stringBuffer.write(builtMethodBody.lines.first);
+      _stringBuffer.write(builtMethodBody.lines.first);
     } else {
       if (builtMethodBody.lines.isEmpty) {
-        stringBuffer.writeln(' {}');
+        _stringBuffer.writeln(' {}');
       } else {
-        stringBuffer.writeln(' {');
-        builtMethodBody.lines.forEach(stringBuffer.writeln);
-        stringBuffer.writeln('}');
+        _stringBuffer.writeln(' {');
+        builtMethodBody.lines.forEach(_stringBuffer.writeln);
+        _stringBuffer.writeln('}');
       }
     }
   }
 
-  /// Writes [builtParameterList] to [stringBuffer].
-  void writeParameterList(
-      StringBuffer stringBuffer, BuiltParameterList builtParameterList) {
-    writeAll(stringBuffer, builtParameterList.requiredArguments,
+  @override
+  void writeParameterList(BuiltParameterList builtParameterList) {
+    writeAll(builtParameterList.requiredArguments,
         writeObject: writeVariable, separator: ', ');
     if (builtParameterList.optionalArguments.isNotEmpty) {
       if (builtParameterList.requiredArguments.isNotEmpty) {
-        stringBuffer.write(', ');
+        _stringBuffer.write(', ');
       }
-      stringBuffer
+      _stringBuffer
           .write(builtParameterList.useNamedOptionalArguments ? '{' : '[');
-      writeAll(stringBuffer, builtParameterList.optionalArguments,
-          writeObject: (StringBuffer buffer, BuiltVariable parameter) {
-        writeVariable(buffer, parameter,
+      writeAll(builtParameterList.optionalArguments,
+          writeObject: (BuiltVariable parameter) {
+        writeVariable(parameter,
             keyValuePair: builtParameterList.useNamedOptionalArguments);
       }, separator: ', ');
-      stringBuffer
+      _stringBuffer
           .write(builtParameterList.useNamedOptionalArguments ? '}' : ']');
     }
   }
 
-  /// Writes [builtType] to [stringBuffer].
-  void writeType(StringBuffer stringBuffer, BuiltType builtType) {
+  @override
+  void writeType(BuiltType builtType) {
     if (builtType.prefix != null) {
-      stringBuffer.write(builtType.prefix);
-      stringBuffer.write('.');
+      _stringBuffer
+        ..write(builtType.prefix)
+        ..write('.');
     }
-    stringBuffer.write(builtType.name);
-    writeAll(stringBuffer, builtType.generics,
+    _stringBuffer.write(builtType.name);
+    writeAll(builtType.generics,
         writeObject: writeType, prefix: '<', separator: ', ', suffix: '>');
   }
 
-  /// Writes [builtParameter] to [stringBuffer].
-  void writeVariable(StringBuffer stringBuffer, BuiltVariable builtParameter,
+  @override
+  void writeVariable(BuiltVariable builtParameter,
       {bool keyValuePair: false}) {
-    writeType(stringBuffer, builtParameter.type);
-    stringBuffer..write(' ')..write(builtParameter.name);
+    writeType(builtParameter.type);
+    _stringBuffer..write(' ')..write(builtParameter.name);
     if (builtParameter.defaultValue != null) {
-      stringBuffer.write(keyValuePair ? ': ' : ' = ');
-      stringBuffer.write(builtParameter.defaultValue);
+      _stringBuffer.write(keyValuePair ? ': ' : ' = ');
+      _stringBuffer.write(builtParameter.defaultValue);
     }
-  }
-
-  static void _identityWriteObject(StringBuffer stringBuffer, Object object) {
-    stringBuffer.write(object.toString());
   }
 }

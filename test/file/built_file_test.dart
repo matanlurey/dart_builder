@@ -10,19 +10,16 @@ import 'package:dart_builder/src/source_writer.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('BuiltFile with SourceWriter', () {
-    StringBuffer stringBuffer;
-    SourceWriter sourceWriter;
+  group('BuiltFile with StringSourceWriter', () {
+    StringSourceWriter sourceWriter;
 
     setUp(() {
-      stringBuffer = new StringBuffer();
-      sourceWriter = const SourceWriter();
+      sourceWriter = new StringSourceWriter();
     });
 
     test('writes a library file', () {
       sourceWriter
           .writeFile(
-              stringBuffer,
               const BuiltFile('foo',
                   definitions: const [
                     const BuiltVariable('someVar'),
@@ -35,7 +32,7 @@ void main() {
                     const BuiltDirective.import('package:bar/bar.dart')
                   ]));
       expect(
-          stringBuffer.toString(),
+          sourceWriter.toString(),
           'library foo;\n'
           'import \'package:bar/bar.dart\';\n'
           '\n'
@@ -51,13 +48,12 @@ void main() {
     test('writes a part file', () {
       sourceWriter
           .writeFile(
-              stringBuffer,
               const BuiltFile('foo',
                   definitions: const [],
                   directives: const [],
                   isPartOf: true));
       expect(
-        stringBuffer.toString(),
+        sourceWriter.toString(),
         'part of foo;\n');
     });
   });
