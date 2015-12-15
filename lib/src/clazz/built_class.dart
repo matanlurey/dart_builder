@@ -1,6 +1,7 @@
 library dart_builder.src.clazz.built_class;
 
 import 'package:collection/equality.dart';
+import 'package:dart_builder/src/base.dart';
 import 'package:dart_builder/src/method/built_method.dart';
 import 'package:dart_builder/src/type/built_type.dart';
 import 'package:dart_builder/src/variable/built_variable.dart';
@@ -9,7 +10,7 @@ import 'package:quiver/core.dart';
 /// Immutable class declaration, useful for code generation.
 ///
 /// See [ClassBuilder] for a mutable builder.
-class BuiltClass {
+class BuiltClass implements BuiltNamedDefinition {
   static final Expando<int> _hashCodes = new Expando<int>('hashCodes');
   static const _listEquals = const ListEquality();
 
@@ -20,6 +21,7 @@ class BuiltClass {
   final bool isExternal;
 
   /// The name of the class.
+  @override
   final String name;
 
   /// Class-level member fields.

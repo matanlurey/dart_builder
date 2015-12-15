@@ -23,6 +23,7 @@ All of the "built" files are:
 Will need to be expanded on (docs, examples), but here are some of the common data structures provided:
 
 - [BuiltClass](//github.com/matanlurey/dart_builder/blob/master/lib/src/clazz/built_class.dart)
+- [BuiltFile](//github.com/matanlurey/dart_builder/blob/master/lib/src/file/built_file.dart)
 - [BuiltMethod](//github.com/matanlurey/dart_builder/blob/master/lib/src/method/built_method.dart)
 - [BuiltType](//github.com/matanlurey/dart_builder/blob/master/lib/src/type/built_type.dart)
 - [BuiltVariable](//github.com/matanlurey/dart_builder/blob/master/lib/src/clazz/built_variable.dart)

@@ -1,6 +1,9 @@
 library dart_builder.src.source_writer;
 
+import 'package:dart_builder/src/base.dart';
 import 'package:dart_builder/src/clazz/built_class.dart';
+import 'package:dart_builder/src/file/built_directive.dart';
+import 'package:dart_builder/src/file/built_file.dart';
 import 'package:dart_builder/src/method/built_method.dart';
 import 'package:dart_builder/src/method/built_method_body.dart';
 import 'package:dart_builder/src/parameter_list/built_parameter_list.dart';
@@ -10,6 +13,8 @@ import 'package:dart_builder/src/variable/built_variable.dart';
 /// Writes [object] to [stringBuffer].
 typedef void WriteObject<T>(StringBuffer stringBuffer, T object);
 
+// TODO: Refactor to remove having to type stringBuffer over and over.
+// Instead, StringSourceWriter?.
 class SourceWriter {
   const SourceWriter();
 
@@ -85,6 +90,9 @@ class SourceWriter {
     if (builtDirective.isExport) {
       stringBuffer.write('export ');
     }
+    if (builtDirective.isPart) {
+      stringBuffer.write('part ');
+    }
     stringBuffer..write("'")..write(builtDirective.url)..write("'");
     writeAll(stringBuffer, builtDirective.show,
         writeObject: (StringBuffer stringBuffer, String token) {
@@ -100,6 +108,42 @@ class SourceWriter {
       }
       stringBuffer..write(' as ')..write(builtDirective.namespace);
     }
+  }
+
+  /// Writes [builtFile] to [stringBuffer].
+  void writeFile(
+      StringBuffer stringBuffer, BuiltFile builtFile) {
+    if (builtFile.isPartOf) {
+      stringBuffer.write('part of ');
+    } else {
+      stringBuffer.write('library ');
+    }
+    stringBuffer
+      ..write(builtFile.libraryName)
+      ..writeln(';');
+    writeAll(
+        stringBuffer,
+        builtFile.directives,
+        writeObject: (StringBuffer stringBuffer, BuiltDirective builtDirective) {
+          writeDirective(stringBuffer, builtDirective);
+          stringBuffer.writeln(';');
+        },
+        suffix: '\n\n');
+    writeAll(
+        stringBuffer,
+        builtFile.definitions,
+        writeObject: (StringBuffer stringBuffer, BuiltNamedDefinition builtNamedDefinition) {
+          if (builtNamedDefinition is BuiltClass) {
+            writeClass(stringBuffer, builtNamedDefinition);
+            stringBuffer.writeln();
+          } else if (builtNamedDefinition is BuiltMethod) {
+            writeMethod(stringBuffer, builtNamedDefinition);
+            stringBuffer.writeln();
+          } else if (builtNamedDefinition is BuiltVariable) {
+            writeVariable(stringBuffer, builtNamedDefinition);
+            stringBuffer.writeln(';');
+          }
+        });
   }
 
   /// Writes [builtMethod] to [stringBuffer].

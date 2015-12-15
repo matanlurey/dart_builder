@@ -1,12 +1,13 @@
 library dart_builder.src.parameter.built_parameter;
 
+import 'package:dart_builder/src/base.dart';
 import 'package:dart_builder/src/type/built_type.dart';
 import 'package:quiver/core.dart';
 
 /// Immutable variable definition, useful for code generation.
 ///
 /// See [VariableBuilder] for a mutable builder.
-class BuiltVariable {
+class BuiltVariable implements BuiltNamedDefinition {
   static final Expando<int> _hashCodes = new Expando<int>('hashCodes');
 
   /// A default value, if any.
@@ -18,6 +19,7 @@ class BuiltVariable {
   final bool isFinal;
 
   /// The name of the parameter.
+  @override
   final String name;
 
   /// The type of the parameter.

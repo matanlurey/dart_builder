@@ -26,6 +26,12 @@ void main() {
       expect(stringBuffer.toString(), "export 'package:foo/foo.dart'");
     });
 
+    test('writes a part', () {
+      sourceWriter.writeDirective(
+          stringBuffer, const BuiltDirective.part('src/foo.dart'));
+      expect(stringBuffer.toString(), "part 'src/foo.dart'");
+    });
+
     test('writes with a namespace', () {
       sourceWriter.writeDirective(
           stringBuffer,

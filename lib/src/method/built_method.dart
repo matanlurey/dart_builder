@@ -1,5 +1,6 @@
 library dart_builder.src.method.built_method;
 
+import 'package:dart_builder/src/base.dart';
 import 'package:dart_builder/src/type/built_type.dart';
 import 'package:quiver/core.dart';
 import 'package:dart_builder/src/parameter_list/built_parameter_list.dart';
@@ -8,7 +9,7 @@ import 'package:dart_builder/src/method/built_method_body.dart';
 /// Immutable method declaration, useful for code generation.
 ///
 /// See [MethodBuilder] for a mutable builder.
-class BuiltMethod {
+class BuiltMethod implements BuiltNamedDefinition {
   static final Expando<int> _hashCodes = new Expando<int>('hashCodes');
 
   static const String operatorAddition = '+';
@@ -48,6 +49,7 @@ class BuiltMethod {
   /// The name of the method.
   ///
   /// May be `null` if the method is a (non-named) closure.
+  @override
   final String name;
 
   /// Defined parameters.
