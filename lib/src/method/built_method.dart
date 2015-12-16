@@ -1,10 +1,10 @@
 library dart_builder.src.method.built_method;
 
 import 'package:dart_builder/src/base.dart';
+import 'package:dart_builder/src/method/built_method_body.dart';
+import 'package:dart_builder/src/parameter_list/built_parameter_list.dart';
 import 'package:dart_builder/src/type/built_type.dart';
 import 'package:quiver/core.dart';
-import 'package:dart_builder/src/parameter_list/built_parameter_list.dart';
-import 'package:dart_builder/src/method/built_method_body.dart';
 
 /// Immutable method declaration, useful for code generation.
 ///
@@ -27,6 +27,9 @@ class BuiltMethod implements BuiltNamedDefinition {
 
   /// Whether the method is marked abstract.
   final bool isAbstract;
+
+  /// Whether the method (constructor) is marked const.
+  final bool isConst;
 
   /// Whether the method is marked external.
   final bool isExternal;
@@ -61,6 +64,7 @@ class BuiltMethod implements BuiltNamedDefinition {
   const BuiltMethod(
       {this.body,
       this.isAbstract: false,
+      this.isConst: false,
       this.isExternal: false,
       this.isFactory: false,
       this.isGetter: false,
@@ -78,6 +82,7 @@ class BuiltMethod implements BuiltNamedDefinition {
       this.isStatic: false,
       this.returnType: BuiltType.coreDynamic})
       : this.isGetter = true,
+        this.isConst = false,
         this.isFactory = false,
         this.isOperator = false,
         this.isSetter = false,
@@ -90,6 +95,7 @@ class BuiltMethod implements BuiltNamedDefinition {
       this.isStatic: false,
       this.parameters: BuiltParameterList.empty})
       : this.isGetter = false,
+        this.isConst = false,
         this.isFactory = false,
         this.isOperator = false,
         this.isSetter = true,
@@ -102,6 +108,7 @@ class BuiltMethod implements BuiltNamedDefinition {
       hashCode = hashObjects([
         body,
         isAbstract,
+        isConst,
         isExternal,
         isFactory,
         isGetter,
@@ -124,6 +131,7 @@ class BuiltMethod implements BuiltNamedDefinition {
       if (o.hashCode != hashCode) return false;
       return o.body == body &&
           o.isAbstract == isAbstract &&
+          o.isConst == isConst &&
           o.isExternal == isExternal &&
           o.isFactory == isFactory &&
           o.isGetter == isGetter &&

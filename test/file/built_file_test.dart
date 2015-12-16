@@ -5,8 +5,8 @@ import 'package:dart_builder/src/file/built_directive.dart';
 import 'package:dart_builder/src/file/built_file.dart';
 import 'package:dart_builder/src/method/built_method.dart';
 import 'package:dart_builder/src/method/built_method_body.dart';
-import 'package:dart_builder/src/variable/built_variable.dart';
 import 'package:dart_builder/src/source_writer.dart';
+import 'package:dart_builder/src/variable/built_variable.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -18,19 +18,13 @@ void main() {
     });
 
     test('writes a library file', () {
-      sourceWriter
-          .writeFile(
-              const BuiltFile('foo',
-                  definitions: const [
-                    const BuiltVariable('someVar'),
-                    const BuiltMethod(
-                        name: 'someMethod',
-                        body: BuiltMethodBody.empty),
-                    const BuiltClass('SomeClass')
-                  ],
-                  directives: const [
-                    const BuiltDirective.import('package:bar/bar.dart')
-                  ]));
+      sourceWriter.writeFile(const BuiltFile('foo', definitions: const [
+        const BuiltVariable('someVar'),
+        const BuiltMethod(name: 'someMethod', body: BuiltMethodBody.empty),
+        const BuiltClass('SomeClass')
+      ], directives: const [
+        const BuiltDirective.import('package:bar/bar.dart')
+      ]));
       expect(
           sourceWriter.toString(),
           'library foo;\n'
@@ -46,15 +40,9 @@ void main() {
     });
 
     test('writes a part file', () {
-      sourceWriter
-          .writeFile(
-              const BuiltFile('foo',
-                  definitions: const [],
-                  directives: const [],
-                  isPartOf: true));
-      expect(
-        sourceWriter.toString(),
-        'part of foo;\n');
+      sourceWriter.writeFile(const BuiltFile('foo',
+          definitions: const [], directives: const [], isPartOf: true));
+      expect(sourceWriter.toString(), 'part of foo;\n');
     });
   });
 }

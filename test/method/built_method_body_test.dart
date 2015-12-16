@@ -13,17 +13,14 @@ void main() {
     });
 
     test('writes a lambda expression', () {
-      sourceWriter.writeMethodBody(const BuiltMethodBody(const ['return 5;'], isExpression: true));
+      sourceWriter.writeMethodBody(
+          const BuiltMethodBody('return 5;', isExpression: true));
       expect(sourceWriter.toString(), ' => return 5;');
     });
 
     test('writes a method body', () {
-      sourceWriter.writeMethodBody(const BuiltMethodBody(const ['_someFoo = 5;']));
-      expect(
-          sourceWriter.toString(),
-          ' {\n'
-          '_someFoo = 5;\n'
-          '}\n');
+      sourceWriter.writeMethodBody(const BuiltMethodBody('_someFoo = 5;'));
+      expect(sourceWriter.toString(), ' {_someFoo = 5;}');
     });
   });
 }

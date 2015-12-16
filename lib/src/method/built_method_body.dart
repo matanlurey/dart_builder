@@ -1,6 +1,5 @@
 library dart_builder.src.method.built_method_body;
 
-import 'package:collection/equality.dart';
 import 'package:quiver/core.dart';
 
 /// Immutable method body declaration, useful for code generation.
@@ -8,8 +7,7 @@ import 'package:quiver/core.dart';
 /// See [MethodBodyBuilder] for a mutable builder.
 class BuiltMethodBody {
   static final Expando<int> _hashCodes = new Expando<int>('hashCodes');
-  static const _listEquals = const ListEquality();
-  static const BuiltMethodBody empty = const BuiltMethodBody(const []);
+  static const BuiltMethodBody empty = const BuiltMethodBody('');
 
   /// Whether the body is a lambda expression.
   final bool isExpression;
@@ -28,9 +26,9 @@ class BuiltMethodBody {
   /// This is assumed to be a list of length 1 if [isExpression].
   ///
   /// TODO: Consider making this is a data structure as well.
-  final List<String> lines;
+  final String body;
 
-  const BuiltMethodBody(this.lines,
+  const BuiltMethodBody(this.body,
       {this.isExpression: false,
       this.isAsync: false,
       this.isStar: false,
@@ -40,8 +38,7 @@ class BuiltMethodBody {
   int get hashCode {
     int hashCode = _hashCodes[this];
     if (hashCode == null) {
-      hashCode = hashObjects(
-          [isExpression, isAsync, isStar, isSync, hashObjects[lines]]);
+      hashCode = hashObjects([isExpression, isAsync, isStar, isSync, body]);
       _hashCodes[this] = hashCode;
     }
     return hashCode;
@@ -56,7 +53,7 @@ class BuiltMethodBody {
           o.isAsync == isAsync &&
           o.isStar == isStar &&
           o.isSync == isSync &&
-          _listEquals(o.lines, lines);
+          o.body == body;
     }
     return false;
   }

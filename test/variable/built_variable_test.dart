@@ -1,8 +1,8 @@
 library dart_builder.test.variable.built_variable_test;
 
-import 'package:dart_builder/src/variable/built_variable.dart';
-import 'package:dart_builder/src/type/built_type.dart';
 import 'package:dart_builder/src/source_writer.dart';
+import 'package:dart_builder/src/type/built_type.dart';
+import 'package:dart_builder/src/variable/built_variable.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -20,9 +20,8 @@ void main() {
     });
 
     test('writes a parameter with a default value', () {
-      sourceWriter.writeVariable(
-          const BuiltVariable('foo',
-              type: BuiltType.coreBool, defaultValue: 'true'));
+      sourceWriter.writeVariable(const BuiltVariable('foo',
+          type: BuiltType.coreBool, defaultValue: 'true'));
       expect(sourceWriter.toString(), 'bool foo = true');
     });
 
