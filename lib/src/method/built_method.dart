@@ -143,4 +143,19 @@ class BuiltMethod implements BuiltNamedDefinition {
     }
     return false;
   }
+
+  @override
+  String toString() => 'BuiltMethod' + {
+    'body': body,
+    'isAbstract': isAbstract,
+    'isConst': isConst,
+    'isExternal': isExternal,
+    'isFactory': isFactory,
+    'isGetter': isGetter,
+    'isOperator': isOperator,
+    'isSetter': isSetter,
+    'name': name,
+    'parameters': parameters,
+    'returnType': returnType
+  }.toString();
 }

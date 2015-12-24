@@ -57,4 +57,12 @@ class BuiltMethodBody {
     }
     return false;
   }
+
+  @override
+  String toString() => 'BuiltMethodBody' + {
+    'body': body,
+    'isAsync': isAsync,
+    'isStar': isStar,
+    'isSync': isSync
+  }.toString();
 }
