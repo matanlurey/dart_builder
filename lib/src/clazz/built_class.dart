@@ -101,4 +101,18 @@ class BuiltClass implements BuiltNamedDefinition {
     }
     return false;
   }
+
+  @override
+  String toString() => 'BuiltClass' + {
+    'name': name,
+    'isAbstract': isAbstract,
+    'isExternal': isExternal,
+    'constructors': constructors,
+    'fields': fields,
+    'methods': methods,
+    'generics': generics,
+    'extend': extend,
+    'implement': implement,
+    'mixin': mixin
+  }.toString();
 }
