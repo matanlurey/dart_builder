@@ -1,6 +1,6 @@
 library dart_builder.src.parameter.built_parameter_list;
 
-import 'package:collection/equality.dart';
+import 'package:collection/collection.dart';
 import 'package:dart_builder/src/variable/built_variable.dart';
 import 'package:quiver/core.dart';
 

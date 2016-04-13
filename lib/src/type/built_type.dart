@@ -1,6 +1,6 @@
 library dart_builder.src.type.built_type;
 
-import 'package:collection/equality.dart';
+import 'package:collection/collection.dart';
 import 'package:quiver/core.dart';
 
 /// Immutable type definition, useful for code generation.
@@ -85,7 +85,8 @@ class BuiltType {
   }
 
   @override
-  String toString() => 'BuiltType' +
+  String toString() =>
+      'BuiltType' +
       {'name': name, 'prefix': prefix, 'generics': generics}.toString();
 }
 
@@ -101,6 +102,10 @@ class _DynamicBuiltType implements BuiltType {
 
   const _DynamicBuiltType();
 
+  // Satisfy Dart analyzer warning.
+  @override
+  bool operator ==(Object o) => super == o;
+
   String toString() => 'BuiltType {dynamic}';
 }
 
@@ -115,6 +120,10 @@ class _VoidBuiltType implements BuiltType {
   final String prefix = null;
 
   const _VoidBuiltType();
+
+  // Satisfy Dart analyzer warning.
+  @override
+  bool operator ==(Object o) => super == o;
 
   @override
   String toString() => 'BuiltType {void}';

@@ -2,7 +2,7 @@ library dart_builder.src.base;
 
 /// A class that can return a type [T] as a result of [build].
 abstract class Builder<T> {
-  /// Returns an immuutable list of the built results from [builders].
+  /// Returns an immutable list of the built results from [builders].
   static List buildHelper(Iterable<Builder> builders) {
     return new List.unmodifiable(builders.map((b) => b.build()));
   }

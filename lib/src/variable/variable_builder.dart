@@ -19,9 +19,11 @@ class VariableBuilder implements Builder<BuiltVariable> {
   /// Whether the variable should be `static`.
   bool isStatic;
 
-  factory VariableBuilder(String name,
-      {TypeBuilder type: TypeBuilder.coreDynamic}) {
-    return new VariableBuilder._(name, false, false, false, type, null);
+  /// A builder for the type.
+  TypeBuilder type;
+
+  factory VariableBuilder(String name, {TypeBuilder type}) {
+    throw new UnimplementedError();
   }
 
   VariableBuilder._(this.name, this._isConst, this._isFinal, this.isStatic,
@@ -51,8 +53,7 @@ class VariableBuilder implements Builder<BuiltVariable> {
 
   @override
   VariableBuilder clone({String rename}) {
-    return new VariableBuilder(
-        rename ?? name, _isConst, _isFinal, isStatic, _typeBuilder.clone());
+    throw new UnimplementedError();
   }
 
   /// Whether the variable should be `const`.
@@ -74,11 +75,5 @@ class VariableBuilder implements Builder<BuiltVariable> {
     var tempDefaultValue = defaultValue;
     defaultValue = null;
     return tempDefaultValue;
-  }
-
-  /// The type.
-  TypeBuilder get type => _typeBuilder;
-  void set type(TypeBuilder typeBuilder) {
-    _typeBuilder = typeBuilder;
   }
 }

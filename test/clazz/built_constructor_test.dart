@@ -1,9 +1,6 @@
 library dart_builder.test.clazz.built_constructor_test;
 
-import 'package:dart_builder/src/clazz/built_class.dart';
 import 'package:dart_builder/src/clazz/built_constructor.dart';
-import 'package:dart_builder/src/method/built_method.dart';
-import 'package:dart_builder/src/method/built_method_body.dart';
 import 'package:dart_builder/src/method/built_method_invocation.dart';
 import 'package:dart_builder/src/parameter_list/built_parameter_list.dart';
 import 'package:dart_builder/src/source_writer.dart';
@@ -26,9 +23,8 @@ void main() {
 
     test('should write a constructor with parameters', () {
       sourceWriter.writeConstructor(
-          const BuiltConstructor(
-              parameters: const BuiltParameterList(
-                  requiredArguments: const [const BuiltVariable('x')])),
+          const BuiltConstructor(parameters: const BuiltParameterList(
+              requiredArguments: const [const BuiltVariable('x')])),
           'Foo');
       expect(sourceWriter.toString(), 'Foo(dynamic x);');
     });

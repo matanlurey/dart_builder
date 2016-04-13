@@ -76,7 +76,8 @@ class BuiltVariable implements BuiltNamedDefinition {
   }
 
   @override
-  String toString() => 'BuiltVariable ' +
+  String toString() =>
+      'BuiltVariable ' +
       {
         'defaultValue': defaultValue,
         'isConst': isConst,

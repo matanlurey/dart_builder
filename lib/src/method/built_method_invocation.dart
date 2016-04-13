@@ -1,6 +1,6 @@
 library dart_builder.src.method.built_method_invocation;
 
-import 'package:collection/equality.dart';
+import 'package:collection/collection.dart';
 import 'package:quiver/core.dart';
 
 /// Immutable method invocation, useful for code generation.

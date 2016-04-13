@@ -16,8 +16,9 @@ void main() {
 
     test('writes a parameter list with a single required parameter', () {
       sourceWriter.writeParameterList(const BuiltParameterList(
-          requiredArguments:
-              const [const BuiltVariable('foo', type: BuiltType.coreString),]));
+          requiredArguments: const [
+            const BuiltVariable('foo', type: BuiltType.coreString),
+          ]));
       expect(sourceWriter.toString(), 'String foo');
     });
 
@@ -32,34 +33,40 @@ void main() {
 
     test('writes a parameter list with a single optional parameter', () {
       sourceWriter.writeParameterList(const BuiltParameterList(
-          optionalArguments:
-              const [const BuiltVariable('foo', type: BuiltType.coreString),]));
+          optionalArguments: const [
+            const BuiltVariable('foo', type: BuiltType.coreString),
+          ]));
       expect(sourceWriter.toString(), '[String foo]');
     });
 
     test('writes a parameter list with a single named parameter', () {
       sourceWriter.writeParameterList(const BuiltParameterList(
-          optionalArguments:
-              const [const BuiltVariable('foo', type: BuiltType.coreString),],
+          optionalArguments: const [
+            const BuiltVariable('foo', type: BuiltType.coreString),
+          ],
           useNamedOptionalArguments: true));
       expect(sourceWriter.toString(), '{String foo}');
     });
 
     test('writes a parameter list with required and optional parameters', () {
       sourceWriter.writeParameterList(const BuiltParameterList(
-          requiredArguments:
-              const [const BuiltVariable('foo', type: BuiltType.coreString)],
-          optionalArguments:
-              const [const BuiltVariable('bar', type: BuiltType.coreInt)]));
+          requiredArguments: const [
+            const BuiltVariable('foo', type: BuiltType.coreString)
+          ],
+          optionalArguments: const [
+            const BuiltVariable('bar', type: BuiltType.coreInt)
+          ]));
       expect(sourceWriter.toString(), 'String foo, [int bar]');
     });
 
     test('writes a parameter list with required and optional parameters', () {
       sourceWriter.writeParameterList(const BuiltParameterList(
-          requiredArguments:
-              const [const BuiltVariable('foo', type: BuiltType.coreString)],
-          optionalArguments:
-              const [const BuiltVariable('bar', type: BuiltType.coreInt)],
+          requiredArguments: const [
+            const BuiltVariable('foo', type: BuiltType.coreString)
+          ],
+          optionalArguments: const [
+            const BuiltVariable('bar', type: BuiltType.coreInt)
+          ],
           useNamedOptionalArguments: true));
       expect(sourceWriter.toString(), 'String foo, {int bar}');
     });

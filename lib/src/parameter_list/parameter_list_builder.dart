@@ -2,6 +2,7 @@ library dart_builder.src.parameter_list.parameter_list_builder;
 
 import 'package:dart_builder/src/base.dart';
 import 'package:dart_builder/src/parameter_list/built_parameter_list.dart';
+import 'package:dart_builder/src/variable/built_variable.dart';
 import 'package:dart_builder/src/variable/variable_builder.dart';
 
 /// A mutable helper for creating a [BuiltParameterList] incrementally.
@@ -42,8 +43,10 @@ class ParameterListBuilder implements Builder<BuiltParameterList> {
   @override
   BuiltParameterList build() {
     return new BuiltParameterList(
-        requiredArguments: Builder.buildHelper(_requiredParameters),
-        optionalArguments: Builder.buildHelper(_optionalParameters),
+        requiredArguments:
+            Builder.buildHelper(_requiredParameters) as List<BuiltVariable>,
+        optionalArguments:
+            Builder.buildHelper(_optionalParameters) as List<BuiltVariable>,
         useNamedOptionalArguments: useNamedOptionalArguments);
   }
 
@@ -80,7 +83,7 @@ class ParameterListBuilder implements Builder<BuiltParameterList> {
     }
     i = _indexOfByName(_optionalParameters, name);
     if (i != -1) {
-      _optionalParameters.removeat(i);
+      _optionalParameters.removeAt(i);
       return true;
     }
     return false;
