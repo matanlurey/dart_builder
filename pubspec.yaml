@@ -2,7 +2,7 @@ name: dart_builder
 author: Matan Lurey <matanl@google.com>
 homepage: https://github.com/matanlurey/dart_builder
 description: A fluent immutable API for creating Dart code.
-version: 2.0.0-alpha.3
+version: 2.0.0-alpha.4
 dependencies:
   analyzer: ">=0.27.0 <0.28.0"
   collection: ">=1.2.0 <2.0.0"

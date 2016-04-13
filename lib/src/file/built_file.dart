@@ -1,6 +1,6 @@
 library dart_builder.src.file.built_file;
 
-import 'package:collection/equality.dart';
+import 'package:collection/collection.dart';
 import 'package:dart_builder/src/base.dart';
 import 'package:dart_builder/src/file/built_directive.dart';
 import 'package:quiver/core.dart';
@@ -19,16 +19,17 @@ class BuiltFile {
   /// Top-level definitions (fields, methods, classes).
   final List<BuiltNamedDefinition> definitions;
 
-  /// The library name this file declares or belongs to.
+  /// The library name this file declares or belongs to. May be left `null`.
   final String libraryName;
 
   /// True if the file is part of [libraryName] versus the library itself.
   final bool isPartOf;
 
-  const BuiltFile(this.libraryName,
+  const BuiltFile(
       {this.definitions: const [],
       this.directives: const [],
-      this.isPartOf: false});
+      this.isPartOf: false,
+      this.libraryName});
 
   @override
   int get hashCode {

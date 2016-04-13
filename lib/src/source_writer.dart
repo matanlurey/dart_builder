@@ -42,7 +42,7 @@ class StringSourceWriter implements SourceWriter {
   /// - Writes items, separating them with [separator].
   /// - Ends with [suffix].
   void writeAll(Iterable objects,
-      {void writeObject(Object object),
+      {void writeObject(dynamic object),
       String prefix: '',
       String separator: '',
       String suffix: ''}) {
@@ -187,12 +187,14 @@ class StringSourceWriter implements SourceWriter {
   void writeFile(BuiltFile builtFile) {
     if (builtFile.isPartOf) {
       _stringBuffer.write('part of ');
-    } else {
+    } else if (builtFile.libraryName != null) {
       _stringBuffer.write('library ');
     }
-    _stringBuffer
-      ..write(builtFile.libraryName)
-      ..writeln(';');
+    if (builtFile.libraryName != null) {
+      _stringBuffer
+        ..write(builtFile.libraryName)
+        ..writeln(';');
+    }
     writeAll(builtFile.directives,
         writeObject: (BuiltDirective builtDirective) {
       writeDirective(builtDirective);

@@ -1,6 +1,6 @@
 library dart_builder.src.file.built_directive;
 
-import 'package:collection/equality.dart';
+import 'package:collection/collection.dart';
 import 'package:quiver/core.dart';
 
 /// An `import` or `export` directive to [url].

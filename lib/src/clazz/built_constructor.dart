@@ -1,6 +1,6 @@
 library dart_builder.src.clazz.built_constructor;
 
-import 'package:collection/equality.dart';
+import 'package:collection/collection.dart';
 import 'package:dart_builder/src/base.dart';
 import 'package:dart_builder/src/method/built_method_invocation.dart';
 import 'package:dart_builder/src/parameter_list/built_parameter_list.dart';
@@ -105,7 +105,6 @@ class BuiltConstructor implements BuiltNamedDefinition {
         this.superCall = null,
         this.superConstructorName = null;
 
-  @override
   int get hashcode {
     int hashCode = _hashCodes[this];
     if (hashCode == null) {
@@ -142,5 +141,6 @@ class BuiltConstructor implements BuiltNamedDefinition {
           o.superConstructorName == superConstructorName &&
           o.redirectTo == redirectTo;
     }
+    return false;
   }
 }

@@ -1,6 +1,6 @@
 library dart_builder.src.clazz.built_class;
 
-import 'package:collection/equality.dart';
+import 'package:collection/collection.dart';
 import 'package:dart_builder/src/base.dart';
 import 'package:dart_builder/src/clazz/built_constructor.dart';
 import 'package:dart_builder/src/method/built_method.dart';

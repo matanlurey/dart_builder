@@ -24,8 +24,9 @@ void main() {
     test('writes a method with parameters', () {
       sourceWriter.writeMethod(const BuiltMethod(
           name: 'foo',
-          parameters: const BuiltParameterList(requiredArguments:
-              const [const BuiltVariable('bar', type: BuiltType.coreBool)]),
+          parameters: const BuiltParameterList(requiredArguments: const [
+            const BuiltVariable('bar', type: BuiltType.coreBool)
+          ]),
           returnType: BuiltType.coreString));
       expect(sourceWriter.toString(), 'String foo(bool bar)');
     });

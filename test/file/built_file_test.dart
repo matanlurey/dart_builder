@@ -18,7 +18,8 @@ void main() {
     });
 
     test('writes a library file', () {
-      sourceWriter.writeFile(const BuiltFile('foo', definitions: const [
+      sourceWriter
+          .writeFile(const BuiltFile(libraryName: 'foo', definitions: const [
         const BuiltVariable('someVar'),
         const BuiltMethod(name: 'someMethod', body: BuiltMethodBody.empty),
         const BuiltClass('SomeClass')
@@ -40,8 +41,11 @@ void main() {
     });
 
     test('writes a part file', () {
-      sourceWriter.writeFile(const BuiltFile('foo',
-          definitions: const [], directives: const [], isPartOf: true));
+      sourceWriter.writeFile(const BuiltFile(
+          libraryName: 'foo',
+          definitions: const [],
+          directives: const [],
+          isPartOf: true));
       expect(sourceWriter.toString(), 'part of foo;\n');
     });
   });
